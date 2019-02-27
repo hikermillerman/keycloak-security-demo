@@ -4,8 +4,7 @@
   "auth-server-url" : "http://localhost:8180/auth",
   "use-resource-role-mappings" : true,
   "public-client": false,
-  "autodetect-bearer-only": true,
   "credentials" : {
-    "secret" : "d9aed0f6-4548-4a97-ae34-f06f330900af"
+    "secret" : "5682bece-3686-4845-8e71-628713f37da5"
   }
 }

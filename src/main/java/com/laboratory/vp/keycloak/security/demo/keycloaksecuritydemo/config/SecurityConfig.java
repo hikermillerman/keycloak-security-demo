@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,11 +19,9 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 
 @Configuration
 @ComponentScan(
-        basePackageClasses = KeycloakSecurityComponents.class,
-        excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.keycloak.adapters.springsecurity.management.HttpSessionManager"))
+        basePackageClasses = KeycloakSecurityComponents.class)
 @EnableWebSecurity
-class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
-{
+class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     /**
      * Registers the KeycloakAuthenticationProvider with the authentication manager.
      */
@@ -50,14 +47,14 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception
-    {
+    protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
         http
                 .authorizeRequests()
                 //.antMatchers("/endpoint", "/**").permitAll()
                 .antMatchers("/resellers*").hasRole("RESELLER")
                 .antMatchers("/distributors*").hasRole("DISTRIBUTOR")
+                .antMatchers("/something*").hasRole("RESELLER")
                 .anyRequest().authenticated();
     }
 }
