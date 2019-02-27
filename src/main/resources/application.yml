@@ -1,0 +1,15 @@
+#keycloak.auth-server-url=http://localhost:8180/auth
+#keycloak.realm=bespoke-realm
+#keycloak.resource=client-1234
+#keycloak.public-client=true
+#keycloak.credentials.secret=d9aed0f6-4548-4a97-ae34-f06f330900af
+#keycloak.principal-attribute=preferred_username
+keycloak:
+  realm: bespoke-realm
+  resource: client-1234
+  credentials:
+    secret:
+      d9aed0f6-4548-4a97-ae34-f06f330900af
+  principal-attribute: preferred_username
+  auth-server-url: http://localhost:8180/auth
+  public-client: false

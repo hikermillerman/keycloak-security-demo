@@ -24,9 +24,23 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-freemarker</artifactId>
 		</dependency>
-		<!--<dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-spring-boot-2-starter</artifactId>
+			<version>4.0.0.Final</version>
+		</dependency>
+		<!--<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-client</artifactId>
+		</dependency>-->
+		<!--<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-wildfly-adapter</artifactId>
+			<version>4.8.3.Final</version>
 		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -60,6 +74,8 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+
 	</dependencies>
 
 	<!-- Step 3 -->

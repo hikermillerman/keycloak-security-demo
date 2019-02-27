@@ -1,0 +1,11 @@
+{
+  "realm" : "bespoke-realm",
+  "resource" : "client-1234",
+  "auth-server-url" : "http://localhost:8180/auth",
+  "use-resource-role-mappings" : true,
+  "public-client": false,
+  "autodetect-bearer-only": true,
+  "credentials" : {
+    "secret" : "d9aed0f6-4548-4a97-ae34-f06f330900af"
+  }
+}

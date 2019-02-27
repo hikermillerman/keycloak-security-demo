@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+
+    <module-name>keycloak-security-demo</module-name>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Resellers</web-resource-name>
+            <url-pattern>/endpoint/resellers/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>RESELLER</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>DISTRIBUTORS</web-resource-name>
+            <url-pattern>/endpoint/distributors/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>DISTRIBUTOR</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>KEYCLOAK</auth-method>
+        <realm-name>bespoke-realm</realm-name>
+    </login-config>
+
+    <security-role>
+        <role-name>RESELLER</role-name>
+    </security-role>
+    <security-role>
+        <role-name>DISTRIBUTOR</role-name>
+    </security-role>
+</web-app>
