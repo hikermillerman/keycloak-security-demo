@@ -33,7 +33,20 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>PROCESSOR</web-resource-name>
-            <url-pattern>/endpoint/something/*</url-pattern>
+            <url-pattern>/endpoint/api/something/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>RESELLER</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>PROCESSOR</web-resource-name>
+            <url-pattern>/endpoint/api/supply/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>RESELLER</role-name>

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -49,12 +50,13 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
+        http.csrf().disable();
         http
                 .authorizeRequests()
-                //.antMatchers("/endpoint", "/**").permitAll()
-                .antMatchers("/resellers*").hasRole("RESELLER")
-                .antMatchers("/distributors*").hasRole("DISTRIBUTOR")
-                .antMatchers("/something*").hasRole("RESELLER")
+                .antMatchers(HttpMethod.GET,"/resellers*").hasRole("RESELLER")
+                .antMatchers(HttpMethod.GET,"/distributors*").hasRole("DISTRIBUTOR")
+                .antMatchers(HttpMethod.GET, "/api/something*").hasRole("RESELLER")
+                .antMatchers(HttpMethod.POST, "/api/supply*").hasRole("RESELLER")
                 .anyRequest().authenticated();
     }
 }
