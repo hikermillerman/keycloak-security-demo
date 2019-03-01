@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DemoRestController {
     @PostMapping(path = "supply")
     public ResponseEntity<ApiResponse> process(@RequestBody ApiRequest apiRequest) {
-        log.info("Api request", apiRequest);
+        log.info("Api request {}", apiRequest.toString());
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setCode("success");
         return ResponseEntity.ok(apiResponse);
