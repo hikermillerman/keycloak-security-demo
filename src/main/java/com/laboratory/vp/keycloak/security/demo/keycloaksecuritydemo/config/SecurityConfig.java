@@ -13,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
@@ -23,6 +24,13 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
         basePackageClasses = KeycloakSecurityComponents.class)
 @EnableWebSecurity
 class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+    private UnauthorizedHandlerConfig unauthorizedHandlerConfig;
+
+    @Autowired
+    public void setUnauthorizedHandlerConfig(UnauthorizedHandlerConfig unauthorizedHandlerConfig) {
+        this.unauthorizedHandlerConfig = unauthorizedHandlerConfig;
+    }
+
     /**
      * Registers the KeycloakAuthenticationProvider with the authentication manager.
      */
@@ -58,5 +66,8 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/something*").hasRole("RESELLER")
                 .antMatchers(HttpMethod.POST, "/api/supply*").hasRole("RESELLER")
                 .anyRequest().authenticated();
+        http
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandlerConfig).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }
