@@ -22,7 +22,7 @@ public class KeycloakLogoutHandler extends SecurityContextLogoutHandler {
     private AdapterDeploymentContext adapterDeploymentContext;
 
     public KeycloakLogoutHandler(AdapterDeploymentContext adapterDeploymentContext) {
-        Assert.notNull(adapterDeploymentContext);
+        Assert.notNull(adapterDeploymentContext, "adapter deployment context cannot be null");
         this.adapterDeploymentContext = adapterDeploymentContext;
     }
 
