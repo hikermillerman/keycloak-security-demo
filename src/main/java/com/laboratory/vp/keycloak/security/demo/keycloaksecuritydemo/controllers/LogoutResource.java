@@ -9,16 +9,15 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 public class LogoutResource {
-    private static final String LOGOUT = "http://localhost:8380/auth/realms/springboot-keycloak1-realm/protocol/openid-connect/logout";
-    @GetMapping(path = "/logout")
+    @GetMapping(path = "logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        session.invalidate();
         try {
+            session.invalidate();
             request.logout();
         } catch (ServletException e) {
             e.printStackTrace();
         }
-        return "/";
+        return "/endpoint/main";
     }
 }

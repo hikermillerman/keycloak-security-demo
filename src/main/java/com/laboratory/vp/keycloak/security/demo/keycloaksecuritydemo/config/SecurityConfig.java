@@ -18,17 +18,18 @@ import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @ComponentScan(
         basePackageClasses = KeycloakSecurityComponents.class)
 @EnableWebSecurity
 class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-    private UnauthorizedHandlerConfig unauthorizedHandlerConfig;
+    private KeycloakLogoutHandler keycloakLogoutHandler;
 
     @Autowired
-    public void setUnauthorizedHandlerConfig(UnauthorizedHandlerConfig unauthorizedHandlerConfig) {
-        this.unauthorizedHandlerConfig = unauthorizedHandlerConfig;
+    public void setKeycloakLogoutHandlerConfig(KeycloakLogoutHandler keycloakLogoutHandler) {
+        this.keycloakLogoutHandler = keycloakLogoutHandler;
     }
 
     /**
@@ -61,13 +62,22 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         http.csrf().disable();
         http
                 .authorizeRequests()
+                .antMatchers("/logout*").permitAll()
                 .antMatchers(HttpMethod.GET,"/resellers*").hasRole("RESELLER")
                 .antMatchers(HttpMethod.GET,"/distributors*").hasRole("DISTRIBUTOR")
                 .antMatchers(HttpMethod.GET, "/api/something*").hasRole("RESELLER")
                 .antMatchers(HttpMethod.POST, "/api/supply*").hasRole("RESELLER")
                 .anyRequest().authenticated();
+        /*
+        // This code prevents keycloak from showing the login screen!!
         http
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandlerConfig).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
+        http.logout().addLogoutHandler(keycloakLogoutHandler);
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

@@ -9,5 +9,5 @@
     </#list>
 </ul>
 <br>
-<a href="/logout">Logout</a>
+<a href="logout">Logout</a>
 </html>
