@@ -37,6 +37,11 @@ http://blog.florian-hopf.de/2017/08/spring-security.html
 * */
 public class MultipleEntryPointsSecurityConfig {
     @Configuration
+    @EnableGlobalMethodSecurity(
+            securedEnabled = true,
+            jsr250Enabled = true,
+            prePostEnabled = true
+    )
     @EnableWebSecurity
     @ComponentScan(
             basePackageClasses = KeycloakSecurityComponents.class)
@@ -71,16 +76,16 @@ public class MultipleEntryPointsSecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             //super.configure(http);
-            /* Only filter endpoints that match api */ http.antMatcher("/api/**");
+            /* Only filter endpoints that match api */ http.antMatcher("/endpoint/api/**");
             http.cors().and().csrf().disable();
             http
                     .authorizeRequests()
-                    .antMatchers("/api/**").permitAll()
-                    .antMatchers("/api/logout/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/resellers/**").hasRole("RESELLER")
-                    .antMatchers(HttpMethod.GET, "/api/distributors/**").hasRole("DISTRIBUTOR")
-                    .antMatchers(HttpMethod.GET, "/api/something/**").hasRole("RESELLER")
-                    .antMatchers(HttpMethod.POST, "/api/supply/**").hasRole("RESELLER")
+                    //.antMatchers("/api/**").permitAll()
+                    .antMatchers("/endpoint/api/logout/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/endpoint/api/resellers/**").hasRole("RESELLER")
+                    .antMatchers(HttpMethod.GET, "/endpoint/api/distributors/**").hasRole("DISTRIBUTOR")
+                    .antMatchers(HttpMethod.GET, "/endpoint/api/something/**").hasRole("RESELLER")
+                    .antMatchers(HttpMethod.POST, "/endpoint/api/supply/**").hasRole("RESELLER")
                     .anyRequest().authenticated();
         /*
         // This code prevents keycloak from showing the login screen!!
