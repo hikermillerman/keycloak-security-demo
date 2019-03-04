@@ -1,16 +1,19 @@
-package com.laboratory.vp.keycloak.security.demo.polls.controller;
+package com.laboratory.vp.keycloak.security.demo.controllers;
 
 import com.laboratory.vp.keycloak.security.demo.polls.exception.AppException;
+import com.laboratory.vp.keycloak.security.demo.polls.model.Poll;
 import com.laboratory.vp.keycloak.security.demo.polls.model.Role;
 import com.laboratory.vp.keycloak.security.demo.polls.model.RoleName;
 import com.laboratory.vp.keycloak.security.demo.polls.model.User;
-import com.laboratory.vp.keycloak.security.demo.polls.payload.PollApiResponse;
 import com.laboratory.vp.keycloak.security.demo.polls.payload.JwtAuthenticationResponse;
 import com.laboratory.vp.keycloak.security.demo.polls.payload.LoginRequest;
+import com.laboratory.vp.keycloak.security.demo.polls.payload.PollApiResponse;
+import com.laboratory.vp.keycloak.security.demo.polls.payload.PollRequest;
 import com.laboratory.vp.keycloak.security.demo.polls.payload.SignUpRequest;
 import com.laboratory.vp.keycloak.security.demo.polls.repository.RoleRepository;
 import com.laboratory.vp.keycloak.security.demo.polls.repository.UserRepository;
 import com.laboratory.vp.keycloak.security.demo.polls.security.JwtTokenProvider;
+import com.laboratory.vp.keycloak.security.demo.polls.service.PollService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +35,8 @@ import java.util.Collections;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/polls")
-public class AuthController {
+@RequestMapping("polls")
+public class MySqlController {
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -50,7 +53,10 @@ public class AuthController {
     @Autowired
     JwtTokenProvider tokenProvider;
 
-    @PostMapping("/signin")
+    @Autowired
+    private PollService pollService;
+
+    @PostMapping("signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
@@ -66,7 +72,7 @@ public class AuthController {
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if(userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PollApiResponse(false, "Username is already taken!"));
@@ -94,5 +100,17 @@ public class AuthController {
                 .buildAndExpand(result.getUsername()).toUri();
 
         return ResponseEntity.created(location).body(new PollApiResponse(true, "User registered successfully"));
+    }
+
+    @PostMapping(path = "create")
+    public ResponseEntity<?> createPoll(@Valid @RequestBody PollRequest pollRequest) {
+        Poll poll = pollService.createPoll(pollRequest);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{pollId}")
+                .buildAndExpand(poll.getId()).toUri();
+
+        return ResponseEntity.created(location)
+                .body(new PollApiResponse(true, "Poll Created Successfully"));
     }
 }

@@ -1,6 +1,5 @@
 package com.laboratory.vp.keycloak.security.demo.config;
 
-import com.laboratory.vp.keycloak.security.demo.config.keycloak.MyLogoutHandler;
 import com.laboratory.vp.keycloak.security.demo.polls.security.CustomUserDetailsService;
 import com.laboratory.vp.keycloak.security.demo.polls.security.JwtAuthenticationEntryPoint;
 import com.laboratory.vp.keycloak.security.demo.polls.security.JwtAuthenticationFilter;
@@ -16,7 +15,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -30,6 +28,7 @@ import org.springframework.security.web.authentication.session.RegisterSessionAu
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
 @Configuration
+@EnableWebSecurity
 /*
 * https://stackoverflow.com/questions/40258583/using-multiple-websecurityconfigureradapter-with-different-authenticationprovide
 http://blog.florian-hopf.de/2017/08/spring-security.html
@@ -37,22 +36,10 @@ http://blog.florian-hopf.de/2017/08/spring-security.html
 * */
 public class MultipleEntryPointsSecurityConfig {
     @Configuration
-    @EnableGlobalMethodSecurity(
-            securedEnabled = true,
-            jsr250Enabled = true,
-            prePostEnabled = true
-    )
-    @EnableWebSecurity
     @ComponentScan(
             basePackageClasses = KeycloakSecurityComponents.class)
-    @Order(1)
+    @Order(2)
     public static class KeyCloakWebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-        private MyLogoutHandler keycloakLogoutHandler;
-
-        @Autowired
-        public void setKeycloakLogoutHandlerConfig(MyLogoutHandler keycloakLogoutHandler) {
-            this.keycloakLogoutHandler = keycloakLogoutHandler;
-        }
 
         /**
          * Registers the KeycloakAuthenticationProvider with the authentication manager.
@@ -75,15 +62,11 @@ public class MultipleEntryPointsSecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            //super.configure(http);
-            /* Only filter endpoints that match api */ http.antMatcher("/endpoint/api/**");
+            /* Only filter endpoints that match api */
             http.cors().and().csrf().disable();
+            http.antMatcher("/endpoint/api/**");
             http
                     .authorizeRequests()
-                    //.antMatchers("/api/**").permitAll()
-                    .antMatchers("/endpoint/api/logout/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/endpoint/api/resellers/**").hasRole("RESELLER")
-                    .antMatchers(HttpMethod.GET, "/endpoint/api/distributors/**").hasRole("DISTRIBUTOR")
                     .antMatchers(HttpMethod.GET, "/endpoint/api/something/**").hasRole("RESELLER")
                     .antMatchers(HttpMethod.POST, "/endpoint/api/supply/**").hasRole("RESELLER")
                     .anyRequest().authenticated();
@@ -92,18 +75,11 @@ public class MultipleEntryPointsSecurityConfig {
         http
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandlerConfig).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);*/
-            http.logout().addLogoutHandler(keycloakLogoutHandler);
         }
     }
 
     @Configuration
-    @EnableGlobalMethodSecurity(
-            securedEnabled = true,
-            jsr250Enabled = true,
-            prePostEnabled = true
-    )
-    @EnableWebSecurity
-    @Order(2)
+    @Order(1)
     public class PollsSecurityConfig extends WebSecurityConfigurerAdapter {
 
         private CustomUserDetailsService customUserDetailsService;
@@ -141,29 +117,14 @@ public class MultipleEntryPointsSecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            /* Only filter endpoints that match polls */ http.antMatcher("/**/polls/**");
+            /* Only filter endpoints that match polls */
             http.cors().and().csrf().disable();
+            http.antMatcher("/endpoint/polls/**");
             http
                     .authorizeRequests()
-                    .antMatchers("/",
-                            "/favicon.ico",
-                            "/**/*.png",
-                            "/**/*.gif",
-                            "/**/*.svg",
-                            "/**/*.jpg",
-                            "/**/*.html",
-                            "/**/*.css",
-                            "/**/*.js")
-                    .permitAll()
-                    .antMatchers("/polls/**")
-                    .permitAll()
-                    /* AuthController */.antMatchers(HttpMethod.POST, "/**/polls/signin/**").permitAll()
-                    /* AuthController */.antMatchers(HttpMethod.POST, "/**/polls/signup/**").permitAll()
-                    /* PollController *//*.antMatchers("/polls/**").permitAll()
-                    *//* UserController *//*.antMatchers(HttpMethod.GET, "/polls/user/me").permitAll()
-                    *//* UserController *//*.antMatchers(HttpMethod.GET, "/polls/user/checkUsernameAvailability").permitAll()
-                    *//* UserController *//*.antMatchers(HttpMethod.GET, "/polls/user/checkEmailAvailability").permitAll()
-                    *//* UserController *//*.antMatchers(HttpMethod.GET, "/polls/users/**").permitAll()*/
+                    .antMatchers(HttpMethod.POST, "/endpoint/polls/signin/**").permitAll()
+                    .antMatchers(HttpMethod.POST, "/endpoint/polls/signup/**").hasRole("ADMIN")
+                    .antMatchers(HttpMethod.POST, "/endpoint/polls/create/**").hasRole("USER")
                     .anyRequest()
                     .authenticated();
             http

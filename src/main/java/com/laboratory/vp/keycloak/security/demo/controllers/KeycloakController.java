@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping(path = "api")
-public class DemoRestController {
+public class KeycloakController {
     @PostMapping(path = "supply")
     public ResponseEntity<ApiResponse> process(@RequestBody ApiRequest apiRequest) {
         log.info("Api request {}", apiRequest.toString());
