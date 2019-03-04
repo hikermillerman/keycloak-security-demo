@@ -7,6 +7,28 @@ keycloak:
   principal-attribute: preferred_username
   auth-server-url: http://localhost:8180/auth
   public-client: false
+
 spring:
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    time-zone: UTC
   main:
     allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/polling_app
+    username: poller
+    password: polling_app_!23A
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+## App Properties
+app:
+  jwtSecret: JWTSuperSecretKey
+  jwtExpirationInMs: 604800000
+
+## Server port
+#server:
+#  port: 8585
